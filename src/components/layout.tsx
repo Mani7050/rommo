@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
+import { toast } from "sonner"
 import {
   SidebarInset,
   SidebarProvider,
@@ -66,19 +67,26 @@ export function DashboardLayout() {
         {/* Mobile Bottom Navigation */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur-md px-2 py-2 flex justify-around items-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
           {primaryNavItems.map((item) => {
+            const isUsers = item.title === "Users"
             const isActive = location.pathname === item.path
             return (
               <button
                 key={item.title}
                 onClick={() => {
-                  navigate(item.path)
-                  setShowMoreMenu(false)
+                  if (isUsers) {
+                    navigate(item.path)
+                    setShowMoreMenu(false)
+                  } else {
+                    toast.warning("Under progress", {
+                      description: `${item.title} is currently under development.`,
+                    })
+                  }
                 }}
                 className={`flex flex-col items-center gap-1 py-1 px-1 rounded-lg transition-all duration-200 active:scale-95 flex-1 min-w-0 ${
                   isActive
                     ? "bg-primary text-primary-foreground font-semibold"
                     : "text-muted-foreground hover:text-foreground"
-                }`}
+                } ${!isUsers ? "opacity-60 hover:opacity-100 cursor-pointer" : "cursor-pointer"}`}
               >
                 {item.icon}
                 <span className="text-[9px] tracking-tight truncate max-w-full">
@@ -130,10 +138,12 @@ export function DashboardLayout() {
                     <button
                       key={item.title}
                       onClick={() => {
-                        navigate(item.path)
+                        toast.warning("Under progress", {
+                          description: `${item.title} is currently under development.`,
+                        })
                         setShowMoreMenu(false)
                       }}
-                      className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all active:scale-95 gap-2 cursor-pointer ${
+                      className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all active:scale-95 gap-2 cursor-pointer opacity-60 hover:opacity-100 ${
                         isActive 
                           ? "bg-primary text-primary-foreground border-primary font-semibold shadow-xs"
                           : "bg-muted/40 hover:bg-muted text-foreground border-transparent"

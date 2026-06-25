@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
-import { auth } from "@/lib/firebase"
+import { auth, db } from "@/lib/firebase"
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore"
 
 export function LoginForm({
   className,
@@ -33,8 +34,24 @@ export function LoginForm({
     setLoading(true)
 
     try {
-      await signInWithEmailAndPassword(auth, email, password)
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const firebaseUser = userCredential.user
       
+      // Sync user profile to Firestore
+      const userDocRef = doc(db, "users", firebaseUser.uid)
+      const userDoc = await getDoc(userDocRef)
+      if (!userDoc.exists()) {
+        const namePart = email.split("@")[0]
+        const capitalized = namePart.charAt(0).toUpperCase() + namePart.slice(1)
+        await setDoc(userDocRef, {
+          name: firebaseUser.displayName || capitalized,
+          email: email,
+          role: "Administrator",
+          status: "Active",
+          createdAt: serverTimestamp(),
+        })
+      }
+
       if (rememberMe) {
         localStorage.setItem("rememberedEmail", email)
       } else {
@@ -45,7 +62,7 @@ export function LoginForm({
         description: "You have successfully logged in to Constructables.",
         duration: 1500,
       })
-      navigate("/dashboard")
+      navigate("/users")
     } catch (err: any) {
       console.error(err)
       let message = "An error occurred during login. Please try again."

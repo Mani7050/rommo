@@ -93,9 +93,8 @@ export default function PaymentsPage() {
           </div>
         )}
         desktopTable={
-          <div className="rounded-md border bg-card overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table>
+          <div className="overflow-x-auto">
+            <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50">
                     <TableHead>Transaction ID</TableHead>
@@ -139,7 +138,6 @@ export default function PaymentsPage() {
                 </TableBody>
               </Table>
             </div>
-          </div>
         }
       />
     </div>
