@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { ResponsiveTable } from "@/components/responsive-table"
-import { PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react"
+import { PencilSimpleIcon, TrashIcon, UserCircleIcon } from "@phosphor-icons/react"
 import { toast } from "sonner"
 import { db } from "@/lib/firebase"
 import {
@@ -363,90 +363,144 @@ export default function UsersPage() {
       />
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent className="sm:max-w-md flex flex-col h-full">
-          <SheetHeader>
-            <SheetTitle>{editingUser ? "Edit User" : "Add New User"}</SheetTitle>
-            <SheetDescription>
-              {editingUser 
-                ? "Modify the user's details and roles in the system." 
-                : "Create a new user account and set their access role."
-              }
-            </SheetDescription>
-          </SheetHeader>
-          
-          <form onSubmit={handleSubmit} className="flex-1 flex flex-col justify-between py-4">
-            <FieldGroup className="gap-5">
-              <Field>
-                <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input
-                  id="name"
-                  placeholder="e.g. John Doe"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                  className="bg-card"
-                />
-              </Field>
+        <SheetContent className="data-[side=right]:sm:max-w-[480px] flex flex-col h-full p-0">
+          <div className="flex-1 overflow-y-auto px-6 pt-6">
+            <SheetHeader className="p-0 mb-6">
+              <SheetTitle className="text-xl font-bold tracking-tight">
+                {editingUser ? "Edit User Account" : "Create New User"}
+              </SheetTitle>
+              <SheetDescription className="text-xs text-muted-foreground mt-1">
+                {editingUser 
+                  ? "Modify the user's details, change system permissions, or update status." 
+                  : "Fill in the details below to add a new team member to the workspace."
+                }
+              </SheetDescription>
+            </SheetHeader>
 
-              <Field>
-                <FieldLabel htmlFor="email">Email Address</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="e.g. john@constructables.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                  className="bg-card"
-                />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="role">Role</FieldLabel>
-                <Select
-                  value={formData.role}
-                  onValueChange={(val) => setFormData({ ...formData, role: val })}
-                >
-                  <SelectTrigger className="w-full bg-card">
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Administrator">Administrator</SelectItem>
-                    <SelectItem value="Project Manager">Project Manager</SelectItem>
-                    <SelectItem value="Site Supervisor">Site Supervisor</SelectItem>
-                    <SelectItem value="Safety Officer">Safety Officer</SelectItem>
-                    <SelectItem value="Contractor">Contractor</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="status">Status</FieldLabel>
-                <Select
-                  value={formData.status}
-                  onValueChange={(val) => setFormData({ ...formData, status: val })}
-                >
-                  <SelectTrigger className="w-full bg-card">
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="Pending">Pending</SelectItem>
-                    <SelectItem value="Suspended">Suspended</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-            </FieldGroup>
-            
-            <div className="flex justify-end gap-2.5 pt-6 mt-auto border-t">
-              <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={submitting}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={submitting}>
-                {submitting ? "Saving..." : editingUser ? "Save Changes" : "Add User"}
-              </Button>
+            {/* Profile Avatar Preview Block */}
+            <div className="flex items-center gap-4 bg-muted/40 p-4 rounded-xl border border-muted/80 mb-6 shadow-xs">
+              {editingUser ? (
+                <div className={`size-14 rounded-full font-bold flex items-center justify-center text-lg shadow-sm border border-background shrink-0 select-none ${getAvatarColor(formData.name)}`}>
+                  {getInitials(formData.name)}
+                </div>
+              ) : (
+                <div className="size-14 rounded-full bg-primary/10 text-primary flex items-center justify-center shadow-xs border border-background shrink-0 select-none">
+                  <UserCircleIcon className="size-8" />
+                </div>
+              )}
+              <div className="flex flex-col min-w-0">
+                <span className="font-semibold text-sm text-foreground truncate">
+                  {formData.name.trim() || (editingUser ? "User Details" : "New Member")}
+                </span>
+                <span className="text-xs text-muted-foreground truncate">
+                  {formData.email.trim() || "No email address set"}
+                </span>
+              </div>
             </div>
-          </form>
+            
+            <form id="user-form" onSubmit={handleSubmit} className="space-y-6 pb-6">
+              {/* Section 1: Personal Details */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">Personal Details</span>
+                  <div className="h-px flex-1 bg-muted" />
+                </div>
+
+                <FieldGroup className="gap-4">
+                  <Field>
+                    <FieldLabel htmlFor="name" className="text-xs font-semibold text-foreground/80">Full Name</FieldLabel>
+                    <Input
+                      id="name"
+                      placeholder="e.g. John Doe"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                      className="bg-card h-10 border-muted-foreground/20 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/20"
+                    />
+                  </Field>
+
+                  <Field>
+                    <FieldLabel htmlFor="email" className="text-xs font-semibold text-foreground/80">Email Address</FieldLabel>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="e.g. john@constructables.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                      className="bg-card h-10 border-muted-foreground/20 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/20"
+                    />
+                  </Field>
+                </FieldGroup>
+              </div>
+
+              {/* Section 2: Access Settings */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">Access & Settings</span>
+                  <div className="h-px flex-1 bg-muted" />
+                </div>
+
+                <FieldGroup className="gap-4">
+                  <Field>
+                    <FieldLabel htmlFor="role" className="text-xs font-semibold text-foreground/80">Role</FieldLabel>
+                    <Select
+                      value={formData.role}
+                      onValueChange={(val) => setFormData({ ...formData, role: val })}
+                    >
+                      <SelectTrigger className="w-full bg-card h-10 border-muted-foreground/20 focus:border-primary focus:ring-1 focus:ring-primary/20">
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Administrator">Administrator</SelectItem>
+                        <SelectItem value="Project Manager">Project Manager</SelectItem>
+                        <SelectItem value="Site Supervisor">Site Supervisor</SelectItem>
+                        <SelectItem value="Safety Officer">Safety Officer</SelectItem>
+                        <SelectItem value="Contractor">Contractor</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+
+                  <Field>
+                    <FieldLabel htmlFor="status" className="text-xs font-semibold text-foreground/80">Status</FieldLabel>
+                    <Select
+                      value={formData.status}
+                      onValueChange={(val) => setFormData({ ...formData, status: val })}
+                    >
+                      <SelectTrigger className="w-full bg-card h-10 border-muted-foreground/20 focus:border-primary focus:ring-1 focus:ring-primary/20">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Active">Active</SelectItem>
+                        <SelectItem value="Pending">Pending</SelectItem>
+                        <SelectItem value="Suspended">Suspended</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                </FieldGroup>
+              </div>
+            </form>
+          </div>
+          
+          <div className="flex justify-end gap-3 px-6 py-4 mt-auto border-t bg-muted/20">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setIsOpen(false)} 
+              disabled={submitting}
+              className="h-10 px-4 cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="submit" 
+              form="user-form"
+              disabled={submitting}
+              className="h-10 px-5 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+            >
+              {submitting ? "Saving..." : editingUser ? "Save Changes" : "Add User"}
+            </Button>
+          </div>
         </SheetContent>
       </Sheet>
     </div>
