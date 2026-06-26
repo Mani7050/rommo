@@ -11,8 +11,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { auth, db } from "@/lib/firebase"
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore"
+import { signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from "firebase/auth"
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore"
 
 export function LoginForm({
   className,
@@ -49,6 +49,28 @@ export function LoginForm({
           role: "Administrator",
           status: "Active",
           createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp(),
+        })
+      } else {
+        const userData = userDoc.data()
+        if (userData?.role !== "Administrator") {
+          await signOut(auth)
+          toast.error("Access Denied", {
+            description: "Only administrators can access this dashboard.",
+          })
+          setLoading(false)
+          return
+        }
+        if (userData?.status !== "Active") {
+          await signOut(auth)
+          toast.error("Access Denied", {
+            description: "Your account is currently inactive. Please contact support.",
+          })
+          setLoading(false)
+          return
+        }
+        await updateDoc(userDocRef, {
+          lastLogin: serverTimestamp(),
         })
       }
 

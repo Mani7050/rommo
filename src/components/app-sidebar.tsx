@@ -2,6 +2,7 @@ import * as React from "react"
 import { useEffect, useState } from "react"
 import { auth } from "@/lib/firebase"
 import { onAuthStateChanged } from "firebase/auth"
+import { Link, useLocation } from "react-router-dom"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
@@ -54,19 +55,13 @@ const data = {
         <QuestionIcon />
       ),
     },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: (
-        <GearIcon />
-      ),
-    },
   ],
 }
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {}
 
 export function AppSidebar({ ...props }: AppSidebarProps) {
+  const location = useLocation()
   const [user, setUser] = useState({
     name: "Admin",
     email: "admin@contractables.com",
@@ -110,6 +105,20 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname === "/settings"}
+              className="cursor-pointer animate-fade-in"
+            >
+              <Link to="/settings">
+                <GearIcon />
+                <span>Settings</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
         <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>

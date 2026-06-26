@@ -40,7 +40,7 @@ export function ResponsiveTable<T>({
           return (
             <div 
               key={id} 
-              className="bg-card border rounded-lg overflow-hidden shadow-xs hover:border-muted-foreground/20 transition-colors"
+              className="bg-card border rounded-none overflow-hidden shadow-xs hover:border-muted-foreground/20 transition-colors"
             >
               {/* Header card summary trigger */}
               <div

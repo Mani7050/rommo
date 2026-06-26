@@ -2,8 +2,9 @@ import { initializeApp } from "firebase/app"
 import { getAnalytics } from "firebase/analytics"
 import { getAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
+import { getFunctions } from "firebase/functions"
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyA1bszfT9-ofgasbdp6HTdl4ByFIsHpqbg",
   authDomain: "constructables-f85bb.firebaseapp.com",
   projectId: "constructables-f85bb",
@@ -24,5 +25,6 @@ if (typeof window !== "undefined") {
 
 export const auth = getAuth(app)
 export const db = getFirestore(app)
+export const functions = getFunctions(app)
 
 export { app, analytics }

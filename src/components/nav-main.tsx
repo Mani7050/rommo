@@ -1,5 +1,4 @@
 import { Link, useLocation } from "react-router-dom"
-import { toast } from "sonner"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -24,17 +23,7 @@ export function NavMain({
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           {items.map((item) => {
-            const isUsers = item.title === "Users"
             const isActive = location.pathname === item.url
-            
-            const handleClick = (e: React.MouseEvent) => {
-              if (!isUsers) {
-                e.preventDefault()
-                toast.warning("Under progress", {
-                  description: `${item.title} is currently under development.`,
-                })
-              }
-            }
 
             return (
               <SidebarMenuItem key={item.title}>
@@ -42,9 +31,9 @@ export function NavMain({
                   asChild
                   tooltip={item.title}
                   isActive={isActive}
-                  className={!isUsers ? "opacity-60 hover:opacity-100 cursor-pointer" : "cursor-pointer"}
+                  className="cursor-pointer"
                 >
-                  <Link to={isUsers ? item.url : "#"} onClick={handleClick}>
+                  <Link to={item.url}>
                     {item.icon}
                     <span>{item.title}</span>
                   </Link>
@@ -57,3 +46,4 @@ export function NavMain({
     </SidebarGroup>
   )
 }
+

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -12,6 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { doc, getDoc, setDoc } from "firebase/firestore"
+import { httpsCallable } from "firebase/functions"
+import { db, functions } from "@/lib/firebase"
 
 export default function SettingsPage() {
   const [company, setCompany] = useState("Constructables")
@@ -22,17 +26,96 @@ export default function SettingsPage() {
   const [theme, setTheme] = useState("light")
   const [saving, setSaving] = useState(false)
 
+  // SMTP Settings States
+  const [smtpHost, setSmtpHost] = useState("")
+  const [smtpPort, setSmtpPort] = useState("587")
+  const [smtpUser, setSmtpUser] = useState("")
+  const [smtpPass, setSmtpPass] = useState("")
+  const [smtpSecure, setSmtpSecure] = useState(false)
+  const [senderEmail, setSenderEmail] = useState("")
+  const [testRecipient, setTestRecipient] = useState("")
+  const [testingSmtp, setTestingSmtp] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  useEffect(() => {
+    getDoc(doc(db, "settings", "system"))
+      .then((docSnap) => {
+        if (!docSnap.exists()) return
+        const data = docSnap.data()
+        setCompany(data.company || "Constructables")
+        setEmail(data.email || "support@constructables.com")
+        setLanguage(data.language || "en")
+        setTwoFactor(data.twoFactor !== undefined ? data.twoFactor : true)
+        setNotify(data.notify !== undefined ? data.notify : true)
+        setTheme(data.theme || "light")
+        setSmtpHost(data.smtpHost || "")
+        setSmtpPort(data.smtpPort || "587")
+        setSmtpUser(data.smtpUser || "")
+        setSmtpPass(data.smtpPass || "")
+        setSmtpSecure(data.smtpSecure !== undefined ? data.smtpSecure : false)
+        setSenderEmail(data.senderEmail || "")
+      })
+      .catch((err) => {
+        console.error("Error fetching settings:", err)
+        toast.error("Could not fetch settings from Firestore.")
+      })
+  }, [])
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
     
-    // Simulate API request saving state
-    setTimeout(() => {
-      setSaving(false)
-      toast.success("Settings updated successfully!", {
-        duration: 2000
+    const settingsPayload = {
+      company,
+      email,
+      language,
+      twoFactor,
+      notify,
+      theme,
+      smtpHost,
+      smtpPort,
+      smtpUser,
+      smtpPass,
+      smtpSecure,
+      senderEmail,
+    }
+
+    setDoc(doc(db, "settings", "system"), settingsPayload)
+      .then(() => {
+        toast.success("Settings updated successfully!", {
+          duration: 2000,
+        })
       })
-    }, 800)
+      .catch((err) => {
+        console.error("Save error:", err)
+        toast.error(err.message || "Failed to save settings to Firestore")
+      })
+      .finally(() => {
+        setSaving(false)
+      })
+  }
+
+  const handleTestSmtp = async () => {
+    if (!testRecipient) {
+      toast.error("Please enter a test recipient email address.")
+      return
+    }
+    setTestingSmtp(true)
+    try {
+      const testSmtpFn = httpsCallable(functions, "testSmtp")
+      const result = await testSmtpFn({
+        smtpUser,
+        smtpPass,
+        testRecipient,
+      })
+      const data = result.data as any
+      toast.success(data.message || "SMTP Connection Verified! Test email sent.")
+    } catch (error: any) {
+      console.error("SMTP Test error:", error)
+      toast.error(error.message || "SMTP verification failed. Check credentials.")
+    } finally {
+      setTestingSmtp(false)
+    }
   }
 
   return (
@@ -97,6 +180,83 @@ export default function SettingsPage() {
                       {mode}
                     </Button>
                   ))}
+                </div>
+              </div>
+            </div>
+
+            <Separator className="my-1" />
+
+            <div className="flex flex-col gap-4">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">SMTP Mail Server Settings</h3>
+                <p className="text-xs text-muted-foreground">Configure dynamic credentials to send transactional notifications and welcome emails.</p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">SMTP Username / Email</label>
+                  <Input 
+                    type="email"
+                    name="smtp_username_field"
+                    autoComplete="new-email"
+                    placeholder="e.g. username@gmail.com"
+                    value={smtpUser}
+                    onChange={(e) => setSmtpUser(e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5 relative">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">SMTP App Password</label>
+                  <div className="relative flex items-center">
+                    <Input 
+                      type={showPassword ? "text" : "password"}
+                      name="smtp_password_field"
+                      autoComplete="new-password"
+                      placeholder="Enter App Password / Pass"
+                      value={smtpPass}
+                      onChange={(e) => setSmtpPass(e.target.value)}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 text-muted-foreground hover:text-foreground cursor-pointer flex items-center h-full"
+                    >
+                      {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Test connection sub-section */}
+              <div className="mt-2 p-4 border border-dashed border-border rounded-lg bg-muted/10 flex flex-col gap-3">
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-semibold text-foreground uppercase tracking-wider">Test SMTP Connection</span>
+                  <span className="text-xs text-muted-foreground">Send a quick test message to verify the dynamic password/credentials.</span>
+                </div>
+                <div className="flex gap-2 max-w-md">
+                  <Input 
+                    type="email"
+                    name="smtp_test_recipient_field"
+                    autoComplete="off"
+                    placeholder="Enter test recipient email address"
+                    value={testRecipient}
+                    onChange={(e) => setTestRecipient(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button 
+                    type="button"
+                    onClick={handleTestSmtp}
+                    disabled={testingSmtp}
+                    variant="outline"
+                    className="shrink-0 cursor-pointer font-semibold flex items-center gap-1.5"
+                  >
+                    {testingSmtp ? (
+                      <>
+                        <Loader2 className="size-3.5 animate-spin" />
+                        Testing...
+                      </>
+                    ) : "Test Connection"}
+                  </Button>
                 </div>
               </div>
             </div>
