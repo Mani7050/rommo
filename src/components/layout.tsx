@@ -3,7 +3,6 @@ import { useState } from "react"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
-import { toast } from "sonner"
 import {
   SidebarInset,
   SidebarProvider,
@@ -16,14 +15,16 @@ import {
   QuestionIcon,
   GearIcon,
   DotsThreeIcon,
+  HouseIcon,
 } from "@phosphor-icons/react"
 
 const pathToTabMap: Record<string, string> = {
   "/dashboard": "Dashboard",
-  "/users": "Users",
+  "/workspaces": "Workspaces",
+  "/users": "Co-workers",
   "/payments": "Payments",
-  "/support-tickets": "Support Tickets",
-  "/faqs": "FAQs",
+  "/support-tickets": "Maintenance",
+  "/faqs": "Offers & Promos",
   "/settings": "Settings",
 }
 
@@ -36,13 +37,14 @@ export function DashboardLayout() {
 
   const primaryNavItems = [
     { title: "Dashboard", path: "/dashboard", icon: <SquaresFourIcon className="size-5" /> },
-    { title: "Users", path: "/users", icon: <UsersIcon className="size-5" /> },
+    { title: "Workspaces", path: "/workspaces", icon: <HouseIcon className="size-5" /> },
+    { title: "Co-workers", path: "/users", icon: <UsersIcon className="size-5" /> },
     { title: "Payments", path: "/payments", icon: <CreditCardIcon className="size-5" /> },
-    { title: "Support Tickets", path: "/support-tickets", icon: <ChatIcon className="size-5" /> },
+    { title: "Maintenance", path: "/support-tickets", icon: <ChatIcon className="size-5" /> },
   ]
 
   const moreNavItems = [
-    { title: "FAQs", path: "/faqs", icon: <QuestionIcon className="size-5" /> },
+    { title: "Offers & Promos", path: "/faqs", icon: <QuestionIcon className="size-5" /> },
     { title: "Settings", path: "/settings", icon: <GearIcon className="size-5" /> },
   ]
 
@@ -67,26 +69,19 @@ export function DashboardLayout() {
         {/* Mobile Bottom Navigation */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur-md px-2 py-2 flex justify-around items-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
           {primaryNavItems.map((item) => {
-            const isUsers = item.title === "Users"
             const isActive = location.pathname === item.path
             return (
               <button
                 key={item.title}
                 onClick={() => {
-                  if (isUsers) {
-                    navigate(item.path)
-                    setShowMoreMenu(false)
-                  } else {
-                    toast.warning("Under progress", {
-                      description: `${item.title} is currently under development.`,
-                    })
-                  }
+                  navigate(item.path)
+                  setShowMoreMenu(false)
                 }}
                 className={`flex flex-col items-center gap-1 py-1 px-1 rounded-lg transition-all duration-200 active:scale-95 flex-1 min-w-0 ${
                   isActive
                     ? "bg-primary text-primary-foreground font-semibold"
                     : "text-muted-foreground hover:text-foreground"
-                } ${!isUsers ? "opacity-60 hover:opacity-100 cursor-pointer" : "cursor-pointer"}`}
+                } cursor-pointer`}
               >
                 {item.icon}
                 <span className="text-[9px] tracking-tight truncate max-w-full">
@@ -138,12 +133,10 @@ export function DashboardLayout() {
                     <button
                       key={item.title}
                       onClick={() => {
-                        toast.warning("Under progress", {
-                          description: `${item.title} is currently under development.`,
-                        })
+                        navigate(item.path)
                         setShowMoreMenu(false)
                       }}
-                      className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all active:scale-95 gap-2 cursor-pointer opacity-60 hover:opacity-100 ${
+                      className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all active:scale-95 gap-2 cursor-pointer ${
                         isActive 
                           ? "bg-primary text-primary-foreground border-primary font-semibold shadow-xs"
                           : "bg-muted/40 hover:bg-muted text-foreground border-transparent"

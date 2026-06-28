@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { SquaresFourIcon, UsersIcon, CreditCardIcon, ChatIcon, QuestionIcon, GearIcon } from "@phosphor-icons/react"
+import { SquaresFourIcon, UsersIcon, CreditCardIcon, ChatIcon, QuestionIcon, GearIcon, HouseIcon } from "@phosphor-icons/react"
 
 const data = {
   navMain: [
@@ -28,7 +28,14 @@ const data = {
       isActive: true,
     },
     {
-      title: "Users",
+      title: "Workspaces",
+      url: "/workspaces",
+      icon: (
+        <HouseIcon />
+      ),
+    },
+    {
+      title: "Co-workers",
       url: "/users",
       icon: (
         <UsersIcon />
@@ -42,14 +49,14 @@ const data = {
       ),
     },
     {
-      title: "Support Tickets",
+      title: "Maintenance",
       url: "/support-tickets",
       icon: (
         <ChatIcon />
       ),
     },
     {
-      title: "FAQs",
+      title: "Offers & Promos",
       url: "/faqs",
       icon: (
         <QuestionIcon />
@@ -64,14 +71,14 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   const location = useLocation()
   const [user, setUser] = useState({
     name: "Admin",
-    email: "admin@contractables.com",
+    email: "admin@rommo.com",
     avatar: "",
   })
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        const email = firebaseUser.email || "admin@contractables.com"
+        const email = firebaseUser.email || "admin@rommo.com"
         const namePart = email.split("@")[0]
         const capitalized = namePart.charAt(0).toUpperCase() + namePart.slice(1)
         setUser({
@@ -95,7 +102,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
             >
               <a href="#">
                 <img src="/logo.svg" alt="Logo" className="size-10" />
-                <span className="text-base font-semibold">Constructables</span>
+                <span className="text-base font-semibold">Rommo</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

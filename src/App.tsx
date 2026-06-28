@@ -9,6 +9,7 @@ import PaymentsPage from "@/pages/payments/page"
 import SupportTicketsPage from "@/pages/support-tickets/page"
 import FAQsPage from "@/pages/faqs/page"
 import SettingsPage from "@/pages/settings/page"
+import WorkspacesPage from "@/pages/workspaces/page"
 
 export function App() {
   return (
@@ -20,6 +21,7 @@ export function App() {
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/users" element={<UsersPage />} />
+            <Route path="/workspaces" element={<WorkspacesPage />} />
             <Route path="/payments" element={<PaymentsPage />} />
             <Route path="/support-tickets" element={<SupportTicketsPage />} />
             <Route path="/faqs" element={<FAQsPage />} />

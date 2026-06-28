@@ -40,7 +40,7 @@ export function NavUser({
     try {
       await signOut(auth)
       toast.success("Successfully logged out.", {
-        description: "You have been logged out of Constructables."
+        description: "You have been logged out of Rommo."
       })
       navigate("/auth/login")
     } catch (err: any) {

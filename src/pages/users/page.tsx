@@ -822,7 +822,7 @@ export default function UsersPage() {
                         id="email"
                         type="email"
                         autoComplete="new-email"
-                        placeholder="e.g. john@constructables.com"
+                        placeholder="e.g. john@rommo.com"
                         value={formData.email}
                         onChange={(e) => {
                           setFormData({ ...formData, email: e.target.value })

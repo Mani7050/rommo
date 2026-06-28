@@ -12,14 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
 import { doc, getDoc, setDoc } from "firebase/firestore"
-import { httpsCallable } from "firebase/functions"
-import { db, functions } from "@/lib/firebase"
+import { db } from "@/lib/firebase"
 
 export default function SettingsPage() {
-  const [company, setCompany] = useState("Constructables")
-  const [email, setEmail] = useState("support@constructables.com")
+  const [company, setCompany] = useState("Rommo")
+  const [email, setEmail] = useState("support@rommo.com")
   const [language, setLanguage] = useState("en")
   const [twoFactor, setTwoFactor] = useState(true)
   const [notify, setNotify] = useState(true)
@@ -33,8 +32,6 @@ export default function SettingsPage() {
   const [smtpPass, setSmtpPass] = useState("")
   const [smtpSecure, setSmtpSecure] = useState(false)
   const [senderEmail, setSenderEmail] = useState("")
-  const [testRecipient, setTestRecipient] = useState("")
-  const [testingSmtp, setTestingSmtp] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
@@ -42,8 +39,8 @@ export default function SettingsPage() {
       .then((docSnap) => {
         if (!docSnap.exists()) return
         const data = docSnap.data()
-        setCompany(data.company || "Constructables")
-        setEmail(data.email || "support@constructables.com")
+        setCompany(data.company || "Rommo")
+        setEmail(data.email || "support@rommo.com")
         setLanguage(data.language || "en")
         setTwoFactor(data.twoFactor !== undefined ? data.twoFactor : true)
         setNotify(data.notify !== undefined ? data.notify : true)
@@ -95,28 +92,6 @@ export default function SettingsPage() {
       })
   }
 
-  const handleTestSmtp = async () => {
-    if (!testRecipient) {
-      toast.error("Please enter a test recipient email address.")
-      return
-    }
-    setTestingSmtp(true)
-    try {
-      const testSmtpFn = httpsCallable(functions, "testSmtp")
-      const result = await testSmtpFn({
-        smtpUser,
-        smtpPass,
-        testRecipient,
-      })
-      const data = result.data as any
-      toast.success(data.message || "SMTP Connection Verified! Test email sent.")
-    } catch (error: any) {
-      console.error("SMTP Test error:", error)
-      toast.error(error.message || "SMTP verification failed. Check credentials.")
-    } finally {
-      setTestingSmtp(false)
-    }
-  }
 
   return (
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4 lg:px-6 max-w-2xl">
@@ -227,38 +202,6 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Test connection sub-section */}
-              <div className="mt-2 p-4 border border-dashed border-border rounded-lg bg-muted/10 flex flex-col gap-3">
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs font-semibold text-foreground uppercase tracking-wider">Test SMTP Connection</span>
-                  <span className="text-xs text-muted-foreground">Send a quick test message to verify the dynamic password/credentials.</span>
-                </div>
-                <div className="flex gap-2 max-w-md">
-                  <Input 
-                    type="email"
-                    name="smtp_test_recipient_field"
-                    autoComplete="off"
-                    placeholder="Enter test recipient email address"
-                    value={testRecipient}
-                    onChange={(e) => setTestRecipient(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button 
-                    type="button"
-                    onClick={handleTestSmtp}
-                    disabled={testingSmtp}
-                    variant="outline"
-                    className="shrink-0 cursor-pointer font-semibold flex items-center gap-1.5"
-                  >
-                    {testingSmtp ? (
-                      <>
-                        <Loader2 className="size-3.5 animate-spin" />
-                        Testing...
-                      </>
-                    ) : "Test Connection"}
-                  </Button>
-                </div>
-              </div>
             </div>
 
             <Separator className="my-1" />

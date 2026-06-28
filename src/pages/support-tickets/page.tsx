@@ -9,10 +9,10 @@ import { toast } from "sonner"
 export default function SupportTicketsPage() {
   const [search, setSearch] = useState("")
   const tickets = [
-    { id: "TKT-8902", title: "Cannot export large document to PDF", customer: "Delta Builders", priority: "High", status: "Open", date: "2 hours ago" },
-    { id: "TKT-8891", title: "Add custom branding options request", customer: "Apex Engineering", priority: "Medium", status: "In Progress", date: "1 day ago" },
-    { id: "TKT-8874", title: "Receipt generation delay", customer: "Safety First LLC", priority: "Low", status: "Resolved", date: "3 days ago" },
-    { id: "TKT-8850", title: "SSO login configuration issue", customer: "Wernham Hogg", priority: "High", status: "Open", date: "4 days ago" },
+    { id: "TKT-8902", title: "AC thermostat stuck in Luxury Penthouse Suite", customer: "Ramesh Kumar", priority: "High", status: "In Progress", date: "2 hours ago" },
+    { id: "TKT-8891", title: "Trash removal requested in Urban Studio Room", customer: "Mani Kumar", priority: "Low", status: "Resolved", date: "1 day ago" },
+    { id: "TKT-8874", title: "WiFi connection speed too slow in Meeting Room B", customer: "Suresh Raina", priority: "Medium", status: "Open", date: "3 days ago" },
+    { id: "TKT-8850", title: "Door entry PIN code not unlocking hot desk pod", customer: "Vikram Seth", priority: "High", status: "Open", date: "4 days ago" },
   ]
 
   const filteredTickets = tickets.filter(t => 

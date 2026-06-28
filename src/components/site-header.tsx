@@ -18,8 +18,8 @@ export function SiteHeader({ activeTab = "Dashboard" }: { activeTab?: string }) 
           
           {/* Mobile Header Logo & Brand */}
           <div className="md:hidden flex items-center gap-2.5 mr-2">
-            <img src="/logo.svg" alt="Constructables Logo" className="h-10 w-auto" />
-            <span className="text-lg font-bold text-primary tracking-tight">Constructables</span>
+            <img src="/logo.svg" alt="Rommo Logo" className="h-10 w-auto" />
+            <span className="text-lg font-bold text-primary tracking-tight">Rommo</span>
           </div>
 
           <h1 className="text-base font-semibold text-foreground ml-1 hidden md:block">{activeTab}</h1>

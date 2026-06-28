@@ -22,8 +22,8 @@ export default function LoginPage() {
       </div>
       <div className="relative hidden bg-muted lg:block">
         <img
-          src="/pexels-andre-124356440-15028045.jpg"
-          alt="Image"
+          src="/coworking_login.png"
+          alt="Rommo Coworking Space"
           className="absolute inset-0 h-full w-full object-cover"
         />
       </div>

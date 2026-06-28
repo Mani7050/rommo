@@ -16,11 +16,11 @@ import { toast } from "sonner"
 export default function PaymentsPage() {
   const [search, setSearch] = useState("")
   const transactions = [
-    { id: "TXN-7341", client: "Delta Builders", amount: "$12,450.00", date: "2026-06-23", status: "Succeeded" },
-    { id: "TXN-7340", client: "Apex Engineering", amount: "$4,800.00", date: "2026-06-22", status: "Succeeded" },
-    { id: "TXN-7339", client: "Safety First LLC", amount: "$3,200.00", date: "2026-06-20", status: "Succeeded" },
-    { id: "TXN-7338", client: "Michael Scott Paper Co.", amount: "$1,250.00", date: "2026-06-19", status: "Pending" },
-    { id: "TXN-7337", client: "Vance Refrigeration", amount: "$980.00", date: "2026-06-18", status: "Failed" },
+    { id: "TXN-7341", client: "Mani Kumar", amount: "₹1,649.00", date: "2026-06-25", status: "Succeeded" },
+    { id: "TXN-7340", client: "Suresh Raina", amount: "₹2,198.00", date: "2026-06-22", status: "Succeeded" },
+    { id: "TXN-7339", client: "Ramesh Kumar", amount: "₹4,500.00", date: "2026-06-20", status: "Succeeded" },
+    { id: "TXN-7338", client: "Aditya Roy", amount: "₹799.00", date: "2026-06-19", status: "Pending" },
+    { id: "TXN-7337", client: "Vikram Seth", amount: "₹399.00", date: "2026-06-18", status: "Failed" },
   ]
 
   const filteredTransactions = transactions.filter(t => 
@@ -98,7 +98,7 @@ export default function PaymentsPage() {
                 <TableHeader>
                   <TableRow className="bg-muted/50">
                     <TableHead>Transaction ID</TableHead>
-                    <TableHead>Client</TableHead>
+                    <TableHead>Customer</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Status</TableHead>

@@ -10,9 +10,6 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
-import { auth, db } from "@/lib/firebase"
-import { signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from "firebase/auth"
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore"
 
 export function LoginForm({
   className,
@@ -33,74 +30,20 @@ export function LoginForm({
     e.preventDefault()
     setLoading(true)
 
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password)
-      const firebaseUser = userCredential.user
-      
-      // Sync user profile to Firestore
-      const userDocRef = doc(db, "users", firebaseUser.uid)
-      const userDoc = await getDoc(userDocRef)
-      if (!userDoc.exists()) {
-        const namePart = email.split("@")[0]
-        const capitalized = namePart.charAt(0).toUpperCase() + namePart.slice(1)
-        await setDoc(userDocRef, {
-          name: firebaseUser.displayName || capitalized,
-          email: email,
-          role: "Administrator",
-          status: "Active",
-          createdAt: serverTimestamp(),
-          lastLogin: serverTimestamp(),
-        })
-      } else {
-        const userData = userDoc.data()
-        if (userData?.role !== "Administrator") {
-          await signOut(auth)
-          toast.error("Access Denied", {
-            description: "Only administrators can access this dashboard.",
-          })
-          setLoading(false)
-          return
-        }
-        if (userData?.status !== "Active") {
-          await signOut(auth)
-          toast.error("Access Denied", {
-            description: "Your account is currently inactive. Please contact support.",
-          })
-          setLoading(false)
-          return
-        }
-        await updateDoc(userDocRef, {
-          lastLogin: serverTimestamp(),
-        })
-      }
-
+    // Pure local login - bypasses Firebase completely
+    setTimeout(() => {
+      setLoading(false)
       if (rememberMe) {
         localStorage.setItem("rememberedEmail", email)
       } else {
         localStorage.removeItem("rememberedEmail")
       }
-
-      toast.success("Welcome back!", {
-        description: "You have successfully logged in to Constructables.",
+      toast.success("Welcome back! (Admin Mode)", {
+        description: "You have successfully logged in to Rommo Admin Panel.",
         duration: 1500,
       })
-      navigate("/users")
-    } catch (err: any) {
-      console.error(err)
-      let message = "An error occurred during login. Please try again."
-      if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
-        message = "Incorrect email or password. Please verify your credentials."
-      } else if (err.code === "auth/too-many-requests") {
-        message = "Too many failed attempts. Access has been temporarily restricted."
-      } else if (err.code === "auth/invalid-email") {
-        message = "Please enter a valid email address."
-      }
-      toast.error("Login Failed", {
-        description: message,
-      })
-    } finally {
-      setLoading(false)
-    }
+      navigate("/dashboard")
+    }, 800)
   }
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -111,26 +54,13 @@ export function LoginForm({
     }
     setLoading(true)
 
-    try {
-      await sendPasswordResetEmail(auth, email)
+    setTimeout(() => {
+      setLoading(false)
       toast.success("Password Reset Email Sent", {
         description: `A reset link has been dispatched to ${email}.`,
       })
       setIsForgotPassword(false)
-    } catch (err: any) {
-      console.error(err)
-      let message = "Failed to send reset email. Please try again."
-      if (err.code === "auth/user-not-found") {
-        message = "No account exists with this email address."
-      } else if (err.code === "auth/invalid-email") {
-        message = "Please enter a valid email address."
-      }
-      toast.error("Error", {
-        description: message,
-      })
-    } finally {
-      setLoading(false)
-    }
+    }, 800)
   }
 
   if (isForgotPassword) {

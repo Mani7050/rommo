@@ -18,12 +18,11 @@ export function SectionCards() {
         <CardHeader>
           <CardDescription>Total Revenue</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
+            ₹2,45,600.00
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <TrendUpIcon
-              />
+              <TrendUpIcon />
               +12.5%
             </Badge>
           </CardAction>
@@ -34,76 +33,73 @@ export function SectionCards() {
             <TrendUpIcon className="size-4" />
           </div>
           <div className="text-muted-foreground">
-            Visitors for the last 6 months
+            Earnings from room bookings and memberships
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>New Customers</CardDescription>
+          <CardDescription>Active Bookings Today</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
+            18
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <TrendDownIcon
-              />
-              -20%
+              <TrendUpIcon />
+              +8.5%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period{" "}
-            <TrendDownIcon className="size-4" />
+            High occupancy in Indiranagar{" "}
+            <TrendUpIcon className="size-4" />
           </div>
           <div className="text-muted-foreground">
-            Acquisition needs attention
+            Desks and meeting rooms currently in use
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          <CardDescription>Space Utilization</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
+            74%
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <TrendUpIcon
-              />
-              +12.5%
+              <TrendUpIcon />
+              +4.2%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention{" "}
+            Efficient space allocation{" "}
             <TrendUpIcon className="size-4" />
           </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
+          <div className="text-muted-foreground">Average desk/room utilization rate</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
+          <CardDescription>Pending Maintenance</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
+            3 Requests
           </CardTitle>
           <CardAction>
-            <Badge variant="outline">
-              <TrendUpIcon
-              />
-              +4.5%
+            <Badge variant="outline" className="bg-rose-500/10 text-rose-600 border-rose-500/20">
+              <TrendDownIcon />
+              -15%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase{" "}
-            <TrendUpIcon className="size-4" />
+            Cleaning & repairs in progress{" "}
+            <TrendDownIcon className="size-4" />
           </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
+          <div className="text-muted-foreground">Tickets needing facility attention</div>
         </CardFooter>
       </Card>
     </div>
